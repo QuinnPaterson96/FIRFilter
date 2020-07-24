@@ -87,6 +87,15 @@ void intToFloat( int16_t *input, double *output, int length )
     }
 }
 
+void floatToInt( int16_t *input, double *output, int length )
+{
+
+    int i;
+    for ( i = 0; i < length; i++ ) {
+        output[i] = (double)input[i];
+    }
+}
+
 
 // number of samples to read per loop, should be set to maximize cache hits
 
@@ -121,3 +130,5 @@ int main( void )
     printf("All Done");
     return 0;
 }
+
+
