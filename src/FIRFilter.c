@@ -19,14 +19,14 @@
 
 
 // array to hold input samples
-double insamp[ BUFFER_LEN ];
+float insamp[ BUFFER_LEN ];
 // the FIR filter function
-void firFloat( double *coeffs, double *input, double *output,
+void firFloat( float *coeffs, float *input, float *output,
        int length, int filterLength )
 {
-    double acc;     // accumulator for MACs
-    double *coeffp; // pointer to coefficients
-    double *inputp; // pointer to input samples
+    float acc;     // accumulator for MACs
+    float *coeffp; // pointer to coefficients
+    float *inputp; // pointer to input samples
     int n;
     int k;
 
@@ -34,7 +34,7 @@ void firFloat( double *coeffs, double *input, double *output,
 
     // put the new samples at the high end of the buffer
     memcpy( &insamp[filterLength - 1], input,
-            length * sizeof(double) );
+            length * sizeof(float) );
 
     // apply the filter to each input sample
     for ( n = 0; n < length; n++ ) {
@@ -49,7 +49,7 @@ void firFloat( double *coeffs, double *input, double *output,
     }
     // shift input samples back in time for next time
     memmove( &insamp[0], &insamp[length],
-            (filterLength - 1) * sizeof(double) );
+            (filterLength - 1) * sizeof(float) );
 }
 
 
@@ -57,7 +57,7 @@ void firFloat( double *coeffs, double *input, double *output,
 #define FILTER_LEN  80
 
 
-double coeffs[] =
+float coeffs[] =
 {
     -9.65559177526501e-05, -0.000117649282356965, -0.000162670559134986, -0.000191769801187762, -0.000189188883080960, -0.000141032384125111, -3.96899005422778e-05, 0.000111931566948361, 0.000297533543666382, 0.000487049167648532,
     0.000639572489160596, 0.000709786347889742, 0.000657266225489007, 0.000457181315299032, 0.000110217055744134, -0.000350791392062556, -0.000859840654199853, -0.00132391284249235, -0.00163656590932425, -0.00169760219953983,
@@ -75,24 +75,24 @@ double coeffs[] =
 
 };
 
-double input[SAMPLES] = {
+float input[SAMPLES] = {
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-void intToFloat( int16_t *input, double *output, int length )
+void intToFloat( int16_t *input, float *output, int length )
 {
 
     int i;
     for ( i = 0; i < length; i++ ) {
-        output[i] = (double)input[i]/(double)32768;
+        output[i] = (float)input[i]/(float)32767;
     }
 }
 
-void floatToInt( double *input, int16_t *output, int length )
+void floatToInt( float *input, int16_t *output, int length )
 {
     int i;
     for ( i = 0; i < length; i++ ) {
-        output[i] = input[i]*32768;
+        output[i] = input[i]*32767;
 
     }
 }
@@ -106,9 +106,9 @@ int main( void )
     int size = SAMPLES;
 
     int16_t output[SAMPLES];
-    double floatInput[SAMPLES];
+    float floatInput[SAMPLES];
     memset(floatInput, 0, sizeof(floatInput));
-    double floatOutput[SAMPLES];
+    float floatOutput[SAMPLES];
     memset(floatOutput, 0, sizeof(floatOutput));
 
 
@@ -120,15 +120,17 @@ int main( void )
 
 
         // print out samples
-        for(int i=0;i<SAMPLES;++i) {
-           printf("%.6f \n", floatOutput[i]);
-         }
+
 
     }
+    for(int i=0;i<SAMPLES;++i) {
+               printf("%.6f,", floatOutput[i]);
+               if(i%10==0){
+            	   printf("\n");
+               }
+             }
 
 
-
-    printf("All Done");
     return 0;
 }
 
