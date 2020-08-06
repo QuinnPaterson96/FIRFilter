@@ -62,7 +62,7 @@ static double input1[] = {
 
 /* Private Functions */
 // the FIR filter function
-void firFloat(const double * const coeffs, const uint32_t filterLength, const double * const input, const uint32_t inputLength, double * const output, const uint32_t outputLength)
+void firFloat( double* restrict coeffs, const uint32_t filterLength,  double* restrict input, const uint32_t inputLength, double* restrict output, const uint32_t outputLength)
 {
     // Ensure none of the pointer are NULL
     if((coeffs != NULL) && (input != NULL) && (output != NULL))
