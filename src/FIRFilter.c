@@ -62,7 +62,7 @@ static double input1[] = {
 
 /* Private Functions */
 // the FIR filter function
-void firFloat(const double * const coeffs, const uint32_t filterLength, const double * const input, const uint32_t inputLength, double * const output, const uint32_t outputLength)
+void firFloat( double* restrict coeffs, const uint32_t filterLength,  double* restrict input, const uint32_t inputLength, double* restrict output, const uint32_t outputLength)
 {
     // Ensure none of the pointer are NULL
     if((coeffs != NULL) && (input != NULL) && (output != NULL))
@@ -118,7 +118,7 @@ int main( void )
     double floatOutput[COUNTOF(coeffs) + COUNTOF(input1) - 1];
     memset(floatOutput, 0, sizeof(floatOutput));
 
-    for(int k =0; k < 100000; k++){
+    for(int k =0; k < 10000; k++){
     // Run the FIR filter
     firFloat(coeffs, COUNTOF(coeffs), input1, COUNTOF(input1), floatOutput, COUNTOF(floatOutput));
     }
