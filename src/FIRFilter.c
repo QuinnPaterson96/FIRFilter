@@ -5,6 +5,9 @@
 
 /* DEFINES */
 #define COUNTOF(x)  (sizeof(x)/sizeof(x[0U]))
+#define filterLength  (200)
+#define inputLength (201)
+#define outputLength filterLength+inputLength-1
 
 /* Private Variables */
 static double coeffs[] =
@@ -62,7 +65,7 @@ static double input1[] = {
 
 /* Private Functions */
 // the FIR filter function
-void firFloat( double* restrict coeffs, const uint32_t filterLength,  double* restrict input, const uint32_t inputLength, double* restrict output, const uint32_t outputLength)
+void firFloat( double* restrict coeffs,  double* restrict input, double* restrict output)
 {
     // Ensure none of the pointer are NULL
     if((coeffs != NULL) && (input != NULL) && (output != NULL))
@@ -120,7 +123,7 @@ int main( void )
 
     for(int k =0; k < 10000; k++){
     // Run the FIR filter
-    firFloat(coeffs, COUNTOF(coeffs), input1, COUNTOF(input1), floatOutput, COUNTOF(floatOutput));
+    firFloat(coeffs, input1, floatOutput);
     }
 
     // print out samples
