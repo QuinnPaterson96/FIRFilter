@@ -56,10 +56,6 @@ static double input1[] = {
     1.7600735107, 2.0000000000
 };
 
-
-
-
-
 /* Private Functions */
 // the FIR filter function
 void firFloat( double* restrict coeffs, const uint32_t filterLength,  double* restrict input, const uint32_t inputLength, double* restrict output, const uint32_t outputLength)
@@ -90,22 +86,22 @@ void firFloat( double* restrict coeffs, const uint32_t filterLength,  double* re
 }
 
 
-void intToFloat( int16_t *input, double *output, int length )
-{
-    int i;
-    for ( i = 0; i < length; i++ ) {
-        output[i] = (double)input[i]/(double)32768;
-    }
-}
+// void intToFloat( int16_t *input, double *output, int length )
+// {
+//     int i;
+//     for ( i = 0; i < length; i++ ) {
+//         output[i] = (double)input[i]/(double)32768;
+//     }
+// }
 
-void floatToInt( double *input, int16_t *output, int length )
-{
-    int i;
-    for ( i = 0; i < length; i++ ) {
-        output[i] = input[i]*32768;
+// void floatToInt( double *input, int16_t *output, int length )
+// {
+//     int i;
+//     for ( i = 0; i < length; i++ ) {
+//         output[i] = input[i]*32768;
 
-    }
-}
+//     }
+// }
 
 
 // number of samples to read per loop, should be set to maximize cache hits
@@ -113,28 +109,33 @@ void floatToInt( double *input, int16_t *output, int length )
 
 int main( void )
 {
-	clock_t start = clock();
 
     double floatOutput[COUNTOF(coeffs) + COUNTOF(input1) - 1];
     memset(floatOutput, 0, sizeof(floatOutput));
 
-    for(int k =0; k < 10000; k++){
-    // Run the FIR filter
-    firFloat(coeffs, COUNTOF(coeffs), input1, COUNTOF(input1), floatOutput, COUNTOF(floatOutput));
+	clock_t start = clock();
+
+    for(int k =0; k < 10000; k++)
+    {
+        // Run the FIR filter
+        firFloat(coeffs, COUNTOF(coeffs), input1, COUNTOF(input1), floatOutput, COUNTOF(floatOutput));
     }
+
+    clock_t end = clock();
 
     // print out samples
     for(uint32_t i = 0U; i < COUNTOF(floatOutput) ; ++i)
     {
-        printf("%.10f,", floatOutput[i]);
-        if(i%10==0&&i!=0){
+        if((i % 10 == 0) && (i != 0))
+        {
         	printf("\n");
         }
+        printf("%15.10f,", floatOutput[i]);
     }
-    clock_t end = clock();
-     double Num_Of_Clocks = end - start;
-     printf("\n");
-     printf("Number of Clocks: %2.3f", Num_Of_Clocks);
+
+    double Num_Of_Clocks = end - start;
+    printf("\n");
+    printf("Number of Clocks: %2.3f\n", Num_Of_Clocks);
 
     // printf("All Done");
 
