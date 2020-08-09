@@ -75,7 +75,7 @@ void firFixed(const int16_t * const coeffs, const uint32_t filterLength, const i
             // Ensure the array bounds aren't exceeded
             // Data outside the bounds of the input is considered zero. Therefore, we can just skip it
             register const uint32_t kStart = n > inputLength ? n - inputLength : 0U;
-            register const uint32_t kEnd = (filterLength > (n+1) ? (n + 1) : filterLength)-1;
+            register const uint32_t kEnd = filterLength > (n+1) ? n : filterLength-1;
 
             register int32_t mult =input[n - kStart] * coeffs[kStart];
             for (register uint32_t k = kStart; k < kEnd; k++ )
