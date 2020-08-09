@@ -11,10 +11,14 @@ FIRFilter_loopOptimize: FIRFilter_loopOptimize.c
 	gcc -msoft-float -S -o FIRFilter_loopOptimize.s FIRFilter_loopOptimize.c
 	gcc -msoft-float -o FIRFilter_loopOptimize FIRFilter_loopOptimize.c
 
-run: FIRFilter_loopOptimize
-	./FIRFilter_loopOptimize
+FIRFilter_macroFunction: FIRFilter_macroFunction.c
+	gcc -msoft-float -fverbose-asm -masm=intel -S -o FIRFilter_macroFunction.s FIRFilter_macroFunction.c
+	gcc -msoft-float -o FIRFilter_macroFunction FIRFilter_macroFunction.c
 
-all: FIRFilter_fixedpoint FIRFilter FIRFilter_loopOptimize
+run: FIRFilter_macroFunction
+	./FIRFilter_macroFunction
+
+all: FIRFilter_fixedpoint FIRFilter FIRFilter_loopOptimize FIRFilter_macroOptimize
 
 clean:
 	rm FIRFilter
