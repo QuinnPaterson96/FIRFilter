@@ -77,7 +77,8 @@ void firFixed(const int16_t * const coeffs, const uint32_t filterLength, const i
             register const uint32_t kStart = n > inputLength ? n - inputLength : 0U;
             register const uint32_t kEnd = filterLength > (n+1) ? n : filterLength-1;
 
-            register int32_t mult =input[n - kStart] * coeffs[kStart];
+             int32_t mult =input[n - kStart] * coeffs[kStart];
+
             for (register uint32_t k = kStart; k < kEnd; k++ )
             {
                 acc += mult >> 8U;
