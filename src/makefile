@@ -3,17 +3,16 @@ FIRFilter: FIRFilter.c
 	gcc -msoft-float -S -o FIRFilter.s FIRFilter.c
 	gcc -msoft-float -o FIRFilter FIRFilter.c
 
-FIRFilter_fixedpoint: FIRFilter_fixedpoint.c
-	gcc -msoft-float -S -o FIRFilter_fixedpoint.s FIRFilter_fixedpoint.c
-	gcc -msoft-float -o FIRFilter_fixedpoint FIRFilter_fixedpoint.c
+FIRFilter_fixedpointp: FIRFilter_fixedpointp.c
+	gcc -msoft-float -S -o FIRFilter_fixedpointp.s FIRFilter_fixedpointp.c
+	gcc -msoft-float -o FIRFilter_fixedpointp FIRFilter_fixedpointp.c
 
-run: FIRFilter_fixedpoint
-	./FIRFilter_fixedpoint
+run: FIRFilter_fixedpointp
+	./FIRFilter_fixedpointp
 
-all: FIRFilter_fixedpoint FIRFilter
+all: FIRFilter_fixedpointp FIRFilter
 
 clean:
-	rm FIRFilter
-	rm FIRFilter_fixedpoint
+	rm FIRFilter_fixedpointp
 
 
