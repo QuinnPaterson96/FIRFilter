@@ -7,13 +7,18 @@ FIRFilter_fixedpoint: FIRFilter_fixedpoint.c
 	gcc -msoft-float -S -o FIRFilter_fixedpoint.s FIRFilter_fixedpoint.c
 	gcc -msoft-float -o FIRFilter_fixedpoint FIRFilter_fixedpoint.c
 
-run: FIRFilter_fixedpoint
-	./FIRFilter_fixedpoint
+FIRFilter_loopOptimize: FIRFilter_loopOptimize.c
+	gcc -msoft-float -S -o FIRFilter_loopOptimize.s FIRFilter_loopOptimize.c
+	gcc -msoft-float -o FIRFilter_loopOptimize FIRFilter_loopOptimize.c
 
-all: FIRFilter_fixedpoint FIRFilter
+run: FIRFilter_loopOptimize
+	./FIRFilter_loopOptimize
+
+all: FIRFilter_fixedpoint FIRFilter FIRFilter_loopOptimize
 
 clean:
 	rm FIRFilter
 	rm FIRFilter_fixedpoint
+	rm FIRFilter_loopOptimize
 
 
