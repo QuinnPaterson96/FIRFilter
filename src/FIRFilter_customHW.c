@@ -7,7 +7,7 @@
 #define COUNTOF(x)  (sizeof(x)/sizeof(x[0U]))
 
 /* Private Variables */
-static int16_t coeffs_int16[] =
+static const int16_t coeffs_int16[] =
 {
     -21, -17, -20, -21, -19, -13, -2, 12, 28,
     44, 58, 67, 67, 59, 40, 11, -23, -60, -94,
@@ -32,7 +32,7 @@ static int16_t coeffs_int16[] =
     -21,
 };
 
-static int16_t input1_int16[] =
+static const int16_t input1_int16[] =
 {
     32767, 28836, 18317, 4567, -8192, -16384, -18317, -14693, -8192,
     -2327, 0, -2327, -8192, -14693, -18317, -16383, -8192, 4567, 18317,
@@ -59,35 +59,41 @@ static int16_t input1_int16[] =
 
 /* Private Functions */
 // the FIR filter function using fixed-point
-void firFixed(const int16_t * const coeffs, const uint32_t filterLength, const int16_t * const input, const uint32_t inputLength, int32_t * const output, const uint32_t outputLength)
-{
-    // Ensure none of the pointer are NULL
-    if((coeffs != NULL) && (input != NULL) && (output != NULL))
-    {
-        // Run multiply and accumulate for each index in filter output
-        register const uint32_t nEnd = outputLength > (filterLength + inputLength - 1) ? (filterLength + inputLength - 1) : outputLength;
-        for (register uint32_t n = 0U; n < nEnd; n++)
-        {
-            register int32_t acc = 0;
-
-            // Convolution
-
-            // Ensure the array bounds aren't exceeded
-            // Data outside the bounds of the input is considered zero. Therefore, we can just skip it
-            register const uint32_t kStart = n > inputLength ? n - inputLength : 0U;
-            register const uint32_t kEnd = filterLength > (n + 1) ? (n + 1) : filterLength;
-            for (register uint32_t k = kStart; k < kEnd; k++ )
-            {
-                acc += (input[n - k] * coeffs[k]) >> 8U;
-            }
-
-            output[n] = acc;
-        }
-    }
+#define firFixed(filterLength, input, inputLength, output, outputLength)\
+{\
+    /* NULL checks not needed this since is a macro now */\
+\
+    /* Run multiply and accumulate for each index in filter output */\
+    register const uint32_t nEnd = outputLength > (filterLength + inputLength - 1) ? (filterLength + inputLength - 1) : outputLength;\
+    for (register uint32_t n = 0U; n < nEnd; n++)\
+    {\
+        register int32_t acc = 0;\
+\
+        /* Convolution */\
+\
+        /* Ensure the array bounds aren't exceeded */\
+        /* Data outside the bounds of the input is considered zero. Therefore, we can just skip it */\
+        register const uint32_t kStart = n > inputLength ? n - inputLength : 0U;\
+        register const uint32_t kEnd = filterLength > (n + 1) ? (n + 1) : filterLength;\
+        __asm__ __volatile__ ("firr");\
+        for (register uint32_t k = kStart; k < (kEnd/2); k += 2 )\
+        {\
+            register int32_t inputHigh = ((const int32_t * const)input)[n-k];\
+            register int32_t inputLow = ((const int32_t * const)input)[n-(k+1)];\
+            __asm__ __volatile__ (\
+                "fir %0, %1 %2\n"\
+                :"=r" (acc)\
+                :"r" (inputHigh), "r" (inputLow)\
+            );\
+            /* acc += (input[n - k] * coeffs[k]) >> 8U; */\
+        }\
+\
+        output[n] = acc;\
+    }\
 }
 
-
 // number of samples to read per loop, should be set to maximize cache hits
+
 
 
 int main( void )
@@ -100,7 +106,7 @@ int main( void )
     for(int k =0; k < 10000; k++)
     {
         // Run the FIR filter
-        firFixed(coeffs_int16, COUNTOF(coeffs_int16), input1_int16, COUNTOF(input1_int16), fixedOutput, COUNTOF(fixedOutput));
+        firFixed(COUNTOF(coeffs_int16), input1_int16, COUNTOF(input1_int16), fixedOutput, COUNTOF(fixedOutput));
     }
 
     clock_t end = clock();

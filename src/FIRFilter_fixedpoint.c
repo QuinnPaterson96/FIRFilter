@@ -59,32 +59,49 @@ static int16_t input1_int16[] =
 
 /* Private Functions */
 // the FIR filter function using fixed-point
-void firFixed(const int16_t * const coeffs, const uint32_t filterLength, const int16_t * const input, const uint32_t inputLength, int32_t * const output, const uint32_t outputLength)
+void firFloatFixed(const int16_t * const coeffs, const uint32_t filterLength, const int16_t * const input, const uint32_t inputLength, int32_t * const output, const uint32_t outputLength)
 {
     // Ensure none of the pointer are NULL
     if((coeffs != NULL) && (input != NULL) && (output != NULL))
     {
         // Run multiply and accumulate for each index in filter output
-        register const uint32_t nEnd = outputLength > (filterLength + inputLength - 1) ? (filterLength + inputLength - 1) : outputLength;
-        for (register uint32_t n = 0U; n < nEnd; n++)
+        for (uint32_t n = 0U; (n < outputLength) && (n < (filterLength + inputLength - 1)); n++)
         {
-            register int32_t acc = 0;
+            int32_t acc = 0;
 
             // Convolution
-
-            // Ensure the array bounds aren't exceeded
-            // Data outside the bounds of the input is considered zero. Therefore, we can just skip it
-            register const uint32_t kStart = n > inputLength ? n - inputLength : 0U;
-            register const uint32_t kEnd = filterLength > (n + 1) ? (n + 1) : filterLength;
-            for (register uint32_t k = kStart; k < kEnd; k++ )
+            for (uint32_t k = 0U; k < filterLength; k++ )
             {
-                acc += (input[n - k] * coeffs[k]) >> 8U;
+                // Ensure the array bounds aren't exceeded
+                // Data outside the bounds of the input is considered zero. Therefore, we can just skip it
+                // `((int32_t)n - k) >= 0` can be moved into the for loop condition section to improve performace. Once it is true, it is always true
+                if(((n - k) < inputLength) && (((int32_t)n - k) >= 0))
+                {
+                    acc += (input[n - k] * coeffs[k]) >> 8U;
+                }
             }
 
             output[n] = acc;
         }
     }
 }
+
+// void intToFloat( int16_t *input, double *output, int length )
+// {
+//     int i;
+//     for ( i = 0; i < length; i++ ) {
+//         output[i] = (double)input[i]/(double)32768;
+//     }
+// }
+
+// void floatToInt( double *input, int16_t *output, int length )
+// {
+//     int i;
+//     for ( i = 0; i < length; i++ ) {
+//         output[i] = input[i]*32768;
+
+//     }
+// }
 
 
 // number of samples to read per loop, should be set to maximize cache hits
@@ -100,7 +117,7 @@ int main( void )
     for(int k =0; k < 10000; k++)
     {
         // Run the FIR filter
-        firFixed(coeffs_int16, COUNTOF(coeffs_int16), input1_int16, COUNTOF(input1_int16), fixedOutput, COUNTOF(fixedOutput));
+        firFloatFixed(coeffs_int16, COUNTOF(coeffs_int16), input1_int16, COUNTOF(input1_int16), fixedOutput, COUNTOF(fixedOutput));
     }
 
     clock_t end = clock();
