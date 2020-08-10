@@ -16,10 +16,13 @@ FIRFilter_pipeline: FIRFilter_pipeline.c
 	gcc -msoft-float -S -o FIRFilter_pipeline.s FIRFilter_pipeline.c
 	gcc -msoft-float -o FIRFilter_pipeline FIRFilter_pipeline.c
 
+FIRFilter_customHW_arm.s: FIRFilter_customHW.c
+	arm-linux-gnueabi-gcc -fverbose-asm -static -S -o FIRFilter_customHW_arm.s FIRFilter_customHW.c
+
 run: FIRFilter_macroFunction
 	./FIRFilter_macroFunction
 
-all: FIRFilter_fixedpoint FIRFilter FIRFilter_loopOptimize FIRFilter_macroFunction FIRFilter_pipeline
+all: FIRFilter_fixedpoint FIRFilter FIRFilter_loopOptimize FIRFilter_macroFunction FIRFilter_pipeline FIRFilter_customHW_arm.s
 
 clean:
 	rm FIRFilter
@@ -27,5 +30,6 @@ clean:
 	rm FIRFilter_loopOptimize
 	rm FIRFilter_pipeline
 	rm FIRFilter_macroFunction
+	rm FIRFilter_customHW_arm.s
 
 
