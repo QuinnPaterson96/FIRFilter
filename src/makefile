@@ -3,7 +3,6 @@ FIRFilter: FIRFilter.c
 	gcc -msoft-float -S -o FIRFilter.s FIRFilter.c
 	gcc -msoft-float -o FIRFilter FIRFilter.c
 
-
 FIRFilter_loopOptimize: FIRFilter_loopOptimize.c
 	gcc -msoft-float -S -o FIRFilter_loopOptimize.s FIRFilter_loopOptimize.c
 	gcc -msoft-float -o FIRFilter_loopOptimize FIRFilter_loopOptimize.c
