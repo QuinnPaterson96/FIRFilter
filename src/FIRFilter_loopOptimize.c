@@ -86,6 +86,7 @@ void firFixed(const int16_t * const coeffs, const uint32_t filterLength, const i
     }
 }
 
+
 // number of samples to read per loop, should be set to maximize cache hits
 
 
